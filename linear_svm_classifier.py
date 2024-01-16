@@ -1,11 +1,20 @@
 import numpy as np 
 
+"""
+Generally any model will have 4 components:
+1. The hyperparameters (defined by init or initiation function)
+2. The fitting (estimating the model parameters using the given data)
+3. Updating parameters
+4. Predicting the new unseen examples
+"""
+
 class linear_svm_classifier():
 
-    def __init__(self, learning_rate, num_iter, reg_lambda):
+    def __init__(self, learning_rate, num_iter, reg_lambda, thres=-1):
         self.learning_rate = learning_rate
         self.num_iter = num_iter
         self.reg_lambda = reg_lambda
+        self.thres = thres
     
     def fit(self, X, Y):
 
@@ -50,8 +59,11 @@ class linear_svm_classifier():
         self.w -= self.learning_rate*dw
         self.b -= self.learning_rate*db
 
-    def predict(self, X):
+    def predict(self, X, threshold=None):
+        if threshold is None:
+            threshold = self.thres
+
         output = np.dot(X, self.w) - self.b
         predicted_labels = np.sign(output)
-        y_hat = np.where(predicted_labels<=-1, 0, 1)
+        y_hat = np.where(predicted_labels<=threshold, 0, 1)
         return y_hat
